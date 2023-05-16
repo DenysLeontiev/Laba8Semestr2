@@ -34,6 +34,7 @@ namespace Laba8Semestr2.Helpers
         public static void SaveToFile(Composter composter, string filePath)
         {
             using var fileStream = new FileStream(filePath, FileMode.Create);
+    
 
             BinaryFormatter binaryFormatter = new BinaryFormatter();
             binaryFormatter.Serialize(fileStream, composter);   

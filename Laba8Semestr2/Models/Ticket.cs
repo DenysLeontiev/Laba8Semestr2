@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Laba8Semestr2.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 namespace Laba8Semestr2.Models
 {
     [Serializable]
-    public class Ticket
+    public sealed class Ticket
     {
         public bool IsMarked { get; set; }
         public string TicketNumber { get; set; }

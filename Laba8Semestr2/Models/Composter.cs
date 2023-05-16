@@ -1,4 +1,5 @@
 ﻿using Laba8Semestr2.Helpers;
+using Laba8Semestr2.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +9,44 @@ using System.Threading.Tasks;
 namespace Laba8Semestr2.Models
 {
     [Serializable]
-    public class Composter
+    public sealed class Composter : ComposterBase, IComposter
     {
+        private List<string> VehiclesWhereComposterCanBeApplied = new List<string>();
+        private Dictionary<string, string> CountryCity = new Dictionary<string, string>();
+
+        public string this[int index]
+        {
+            get 
+            { 
+                if(index >= 0 && index < VehiclesWhereComposterCanBeApplied.Count)
+                {
+                    return VehiclesWhereComposterCanBeApplied[index];
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            set 
+            { 
+                if(index == VehiclesWhereComposterCanBeApplied.Count)
+                {
+                    VehiclesWhereComposterCanBeApplied.Add(value);
+                }
+                else if(index >= 0 && index < VehiclesWhereComposterCanBeApplied.Count)
+                {
+                    VehiclesWhereComposterCanBeApplied[index] = value;
+                }
+                VehiclesWhereComposterCanBeApplied[index] = value; 
+            }
+        }
+
+        public string this[string key]
+        {
+            get { return CountryCity[key]; }
+            set { CountryCity[key] = value; }
+        }
+
         private const int ticketRequestsPerDay = 1;
         private bool canComposterBeUsed = true;
 
@@ -30,14 +67,6 @@ namespace Laba8Semestr2.Models
             Number = CodeGenerator.GenerateUniqueCode();
         }
 
-        public Composter(Ticket ticket, string number)
-        {
-            Number = CodeGenerator.GenerateUniqueCode();
-
-            Ticket = ticket;
-            Number = number;
-        }
-
         public Composter(string busNumber, string routeNumber)
         {
             Number = CodeGenerator.GenerateUniqueCode();
@@ -51,6 +80,25 @@ namespace Laba8Semestr2.Models
             Ticket = composter.Ticket;
             BusNumber = composter.BusNumber;
             RouteNumber = composter.RouteNumber;
+        }
+
+        public static bool operator ==(Composter leftComposter, Composter rightComposter)
+        {
+            return leftComposter.BusNumber == rightComposter.BusNumber;
+        }
+
+        public static bool operator !=(Composter leftComposter, Composter rightComposter)
+        {
+            return leftComposter.RouteNumber != rightComposter.RouteNumber;
+        }
+
+        public static Composter operator +(Composter leftComposter, Composter rightComposter)
+        {
+            Composter newComposter = new Composter();
+
+            newComposter.RouteNumber = leftComposter.RouteNumber + rightComposter.RouteNumber;
+            newComposter.BusNumber = leftComposter.BusNumber + rightComposter.BusNumber;
+            return newComposter;
         }
 
         public string GetCode()
@@ -117,7 +165,8 @@ namespace Laba8Semestr2.Models
         public void Control()
         {
             var processedTickets = Program.GetProcessedTickets();
-            canComposterBeUsed = processedTickets.Count() >= ticketRequestsPerDay ? false : true;
+            //canComposterBeUsed = processedTickets.Count() >= ticketRequestsPerDay ? false : true;
+            canComposterBeUsed = ComposterProcessedTickets >= ticketRequestsPerDay ? false : true;
         }
 
         public override string ToString()
@@ -131,6 +180,14 @@ namespace Laba8Semestr2.Models
 
             return objectInString;
             
+        }
+
+        public void OutputAllInstances(IComposter[] composters)
+        {
+            for (int i = 0; i < composters.Length; i++)
+            {
+                Console.WriteLine(composters[i].ToString());
+            }
         }
     }
 }
